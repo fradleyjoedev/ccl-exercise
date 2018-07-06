@@ -119,10 +119,9 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);    
             var itemsService = new Items(engine);
 
-            player.Armour.Should().Be(0);
+            itemsService.Armour.Should().Be(0);
 
             Item armour = ItemBuilder.Build.WithArmour(100);
 
@@ -213,6 +212,22 @@ namespace Tests
 
             // Assert
             enemy.Received().TakeDamage(100);
+        }
+
+        [Fact]
+        public void PickUpItem_ShowBlueSwirly_RareUnique()
+        {
+            // Arrange
+            var engine = Substitute.For<IGameEngine>();
+            var itemsService = new Items(engine);
+
+            Item item = ItemBuilder.Build.IsRare(true).IsUnique(true);
+
+            // Act
+            itemsService.PickUpItem(item);
+
+            // Assert
+            engine.Received().PlaySpecialEffect("blue_swirly");
         }
     }
 }

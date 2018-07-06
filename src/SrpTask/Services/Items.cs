@@ -70,6 +70,9 @@ namespace SrpTask
                 return true;
             }
 
+            if (item.Rare && item.Unique)
+                _gameEngine.PlaySpecialEffect("blue_swirly");
+
             if (item.Rare)
                 _gameEngine.PlaySpecialEffect("cool_swirly_particles");
 
