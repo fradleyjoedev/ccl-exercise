@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using SrpTask.Constants;
 
-namespace SrpTask
+namespace SrpTask.Services
 {
     public class RpgPlayer
     {
@@ -20,14 +19,14 @@ namespace SrpTask
         {
             if (damage < Armour)
             {
-                _gameEngine.PlaySpecialEffect("parry");
+                _gameEngine.PlaySpecialEffect(Effects.Parry);
                 return;
             }
 
             var damageToDeal = damage - Armour;
             Health -= damageToDeal;
             
-            _gameEngine.PlaySpecialEffect("lots_of_gore");
+            _gameEngine.PlaySpecialEffect(Effects.LotsOfGore);
         }
     }
 }

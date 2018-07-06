@@ -1,6 +1,6 @@
 ﻿using SrpTask;
 
-namespace Tests
+namespace Tests.Builders
 {
     public class ItemBuilder
     {
@@ -11,6 +11,7 @@ namespace Tests
         private int _weight = 0;
         private bool _unique = false;
         private bool _rare = false;
+        private bool _capcity = false;
 
         public static ItemBuilder Build => new ItemBuilder();
 
@@ -21,7 +22,7 @@ namespace Tests
 
         private Item AnItem()
         {
-            return new Item(_id, _name, _heal, _armour, _weight, _unique, _rare);
+            return new Item(_id, _name, _heal, _armour, _weight, _unique, _rare, _capcity);
         }
 
         private ItemBuilder()
@@ -44,6 +45,12 @@ namespace Tests
         public ItemBuilder IsUnique(bool isUnique)
         {
             _unique = isUnique;
+            return this;
+        }
+
+        public ItemBuilder ReduceCapcity(bool capcity)
+        {
+            _capcity = capcity;
             return this;
         }
 

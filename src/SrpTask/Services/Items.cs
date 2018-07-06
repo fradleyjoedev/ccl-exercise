@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using SrpTask.Constants;
 
 namespace SrpTask
 {
@@ -34,7 +35,7 @@ namespace SrpTask
 
         public void UseItem(Item item)
         {
-            if (item.Name == "Stink Bomb")
+            if (item.Name == ItemName.StinkBomb)
             {
                 var enemies = _gameEngine.GetEnemiesNear(this);
 
@@ -64,17 +65,20 @@ namespace SrpTask
 
                 if (item.Heal > 500)
                 {
-                    _gameEngine.PlaySpecialEffect("green_swirly");
+                    _gameEngine.PlaySpecialEffect(Effects.GreenSwirly);
                 }
 
                 return true;
             }
 
+            if (item.Capacity)
+                CarryingCapacity = CarryingCapacity / 2;
+
             if (item.Rare && item.Unique)
-                _gameEngine.PlaySpecialEffect("blue_swirly");
+                _gameEngine.PlaySpecialEffect(Effects.BlueSwirly);
 
             if (item.Rare)
-                _gameEngine.PlaySpecialEffect("cool_swirly_particles");
+                _gameEngine.PlaySpecialEffect(Effects.CoolSwirly);
 
             Inventory.Add(item);
 

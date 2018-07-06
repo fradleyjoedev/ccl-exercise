@@ -37,7 +37,12 @@
         /// </summary>
         public readonly bool Rare;
 
-        public Item(int id, string name, int heal, int armour, int weight, bool unique, bool rare)
+        /// <summary>
+        /// Reduce there maximum capicity
+        /// </summary>
+        public readonly bool Capacity;
+
+        public Item(int id, string name, int heal, int armour, int weight, bool unique, bool rare, bool capacity)
         {
             Rare = rare;
             Name = name;
@@ -46,6 +51,7 @@
             Weight = weight;
             Unique = unique;
             Id = id;
+            Capacity = capacity;
         }
     }
 }

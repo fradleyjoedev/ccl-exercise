@@ -2,7 +2,10 @@ using System.Collections.Generic;
 using FluentAssertions;
 using NSubstitute;
 using SrpTask;
+using SrpTask.Constants;
+using SrpTask.Services;
 using Xunit;
+using Tests.Builders;
 
 namespace Tests
 {
@@ -79,7 +82,7 @@ namespace Tests
             itemsService.PickUpItem(rareItem);
 
             // Assert
-            engine.Received().PlaySpecialEffect("cool_swirly_particles");
+            engine.Received().PlaySpecialEffect(Effects.CoolSwirly);
         }
 
         [Fact]
@@ -111,7 +114,7 @@ namespace Tests
             itemsService.PickUpItem(xPotion);
 
             // Assert
-            engine.Received().PlaySpecialEffect("green_swirly");
+            engine.Received().PlaySpecialEffect(Effects.GreenSwirly);
         }
 
         [Fact]
@@ -162,7 +165,7 @@ namespace Tests
 
             // Assert
             player.Health.Should().Be(100);
-            engine.Received().PlaySpecialEffect("lots_of_gore");
+            engine.Received().PlaySpecialEffect(Effects.LotsOfGore);
         }
 
         [Fact]
@@ -177,7 +180,7 @@ namespace Tests
 
             // Assert
             player.Health.Should().Be(150);
-            engine.Received().PlaySpecialEffect("lots_of_gore");
+            engine.Received().PlaySpecialEffect(Effects.LotsOfGore);
         }
 
         [Fact]
@@ -192,7 +195,7 @@ namespace Tests
 
             // Assert
             player.Health.Should().Be(200);
-            engine.Received().PlaySpecialEffect("parry");
+            engine.Received().PlaySpecialEffect(Effects.Parry);
         }
 
         [Fact]
@@ -204,7 +207,7 @@ namespace Tests
 
             var itemsService = new Items(engine);
 
-            Item item = ItemBuilder.Build.WithName("Stink Bomb");
+            Item item = ItemBuilder.Build.WithName(ItemName.StinkBomb);
             engine.GetEnemiesNear(itemsService).Returns(new List<IEnemy> {enemy});
 
             // Act
@@ -227,7 +230,28 @@ namespace Tests
             itemsService.PickUpItem(item);
 
             // Assert
-            engine.Received().PlaySpecialEffect("blue_swirly");
+            engine.Received().PlaySpecialEffect(Effects.BlueSwirly);
+        }
+
+        [Fact]
+        public void TakeDamage_25PercentWhenCarryingCapacityIsHalf()
+        {
+            // Arrange
+            int health = 100;
+            var engine = Substitute.For<IGameEngine>();
+            var itemsService = new Items(engine);
+            var player = new RpgPlayer(engine) { Health = health};
+
+            Item item = ItemBuilder.Build.ReduceCapcity(true);
+
+            // Act
+            itemsService.PickUpItem(item);
+            player.TakeDamage(health / 100 * 25);
+
+            // Assert
+            itemsService.CarryingCapacity.Should().Be(500);
+            // 25% damage to health
+            player.Health.Should().Be(health - (health / 100 * 25));
         }
     }
 }
