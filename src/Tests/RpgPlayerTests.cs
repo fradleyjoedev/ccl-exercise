@@ -13,16 +13,16 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);
+            var itemsService = new Items(engine);
             Item item = ItemBuilder.Build;
 
-            player.Inventory.Should().BeEmpty();
+            itemsService.Inventory.Should().BeEmpty();
 
             // Act
-            player.PickUpItem(item);
+            itemsService.PickUpItem(item);
 
             // Assert
-            player.Inventory.Should().Contain(item);
+            itemsService.Inventory.Should().Contain(item);
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine)
+            var itemsService = new Items(engine)
             {
                 MaxHealth = 100,
                 Health = 10
@@ -39,11 +39,11 @@ namespace Tests
             Item healthPotion = ItemBuilder.Build.WithHeal(100);
 
             // Act
-            player.PickUpItem(healthPotion);
+            itemsService.PickUpItem(healthPotion);
 
             // Assert
-            player.Inventory.Should().BeEmpty();
-            player.Health.Should().Be(100);
+            itemsService.Inventory.Should().BeEmpty();
+            itemsService.Health.Should().Be(100);
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine)
+            var itemsService = new Items(engine)
             {
                 MaxHealth = 50,
                 Health = 10
@@ -60,11 +60,11 @@ namespace Tests
             Item healthPotion = ItemBuilder.Build.WithHeal(100);
 
             // Act
-            player.PickUpItem(healthPotion);
+            itemsService.PickUpItem(healthPotion);
 
             // Assert
-            player.Inventory.Should().BeEmpty();
-            player.Health.Should().Be(50);
+            itemsService.Inventory.Should().BeEmpty();
+            itemsService.Health.Should().Be(50);
         }
 
         [Fact]
@@ -72,11 +72,11 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);
+            var itemsService = new Items(engine);
             Item rareItem = ItemBuilder.Build.IsRare(true);
 
             // Act
-            player.PickUpItem(rareItem);
+            itemsService.PickUpItem(rareItem);
 
             // Assert
             engine.Received().PlaySpecialEffect("cool_swirly_particles");
@@ -87,13 +87,13 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);
-            player.PickUpItem(ItemBuilder.Build.WithId(100));
+            var itemsService = new Items(engine);
+            itemsService.PickUpItem(ItemBuilder.Build.WithId(100));
 
             Item uniqueItem = ItemBuilder.Build.WithId(100).IsUnique(true);
 
             // Act
-            var result = player.PickUpItem(uniqueItem);
+            var result = itemsService.PickUpItem(uniqueItem);
 
             // Assert
             result.Should().BeFalse();
@@ -104,11 +104,11 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);
+            var itemsService = new Items(engine);
             Item xPotion = ItemBuilder.Build.WithHeal(501);
 
             // Act
-            player.PickUpItem(xPotion);
+            itemsService.PickUpItem(xPotion);
 
             // Assert
             engine.Received().PlaySpecialEffect("green_swirly");
@@ -119,16 +119,18 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);
+            var player = new RpgPlayer(engine);    
+            var itemsService = new Items(engine);
+
             player.Armour.Should().Be(0);
 
             Item armour = ItemBuilder.Build.WithArmour(100);
 
             // Act
-            player.PickUpItem(armour);
+            itemsService.PickUpItem(armour);
 
             // Assert
-            player.Armour.Should().Be(100);
+            itemsService.Armour.Should().Be(100);
         }
 
         [Fact]
@@ -136,11 +138,11 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);
-            Item heavyItem = ItemBuilder.Build.WithWeight(player.CarryingCapacity + 1);
+            var itemsService = new Items(engine);
+            Item heavyItem = ItemBuilder.Build.WithWeight(itemsService.CarryingCapacity + 1);
 
             // Act
-            var result = player.PickUpItem(heavyItem);
+            var result = itemsService.PickUpItem(heavyItem);
 
             // Assert
             result.Should().BeFalse();
@@ -169,8 +171,7 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine) {Health = 200};
-            player.PickUpItem(ItemBuilder.Build.WithArmour(50));
+            var player = new RpgPlayer(engine) {Health = 200, Armour = 50 };
 
             // Act
             player.TakeDamage(100);
@@ -185,8 +186,7 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine) {Health = 200};
-            player.PickUpItem(ItemBuilder.Build.WithArmour(2000));
+            var player = new RpgPlayer(engine) {Health = 200, Armour = 2000};
 
             // Act
             player.TakeDamage(100);
@@ -201,14 +201,15 @@ namespace Tests
         {
             // Arrange
             var engine = Substitute.For<IGameEngine>();
-            var player = new RpgPlayer(engine);
             var enemy = Substitute.For<IEnemy>();
 
+            var itemsService = new Items(engine);
+
             Item item = ItemBuilder.Build.WithName("Stink Bomb");
-            engine.GetEnemiesNear(player).Returns(new List<IEnemy> {enemy});
+            engine.GetEnemiesNear(itemsService).Returns(new List<IEnemy> {enemy});
 
             // Act
-            player.UseItem(item);
+            itemsService.UseItem(item);
 
             // Assert
             enemy.Received().TakeDamage(100);
